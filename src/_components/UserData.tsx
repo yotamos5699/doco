@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { options } from "../api/auth/[...nextauth]/options";
+import { options } from "../app/api/auth/[...nextauth]/options";
 
 async function UserData({ onlyImg }: { onlyImg?: boolean }) {
   const session = await getServerSession(options);
