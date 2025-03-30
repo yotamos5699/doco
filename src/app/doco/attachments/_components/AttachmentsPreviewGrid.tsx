@@ -66,20 +66,20 @@ export const AttachmentsPreviewGrid = () => {
       {/* <Card>asdss</Card> */}
       {/* <GenericModelContainer className="flex flex-col h-[90%] w-full" md={md} setMd={setMd} /> */}
       <div className="flex flex-wrap gap-4 ">
-        {attachments?.map((mail) => {
+        {attachments?.map((attachment) => {
           // const stat = uploads.get(mail?.id);
           return (
-            <Card className={`relative w-72 h-96`} key={mail.id}>
+            <Card className={`relative w-72 h-96`} key={attachment.id}>
               {/* <div>{mail.meta.valueDate}</div> */}
               {/* <span>{mail.meta.fileName}</span> */}
 
               {/* <FileMetaData fileName={mail.meta.fileName} /> */}
-              <FileView props={mail} />
+              <FileView attachment={attachment} />
               <AttachmentActionsBar
-                uploadFileToDrive={() => uploadFileToDrive(mail.id)}
-                setView={() => setViewComp(mail.dataUrl)}
-                data={mail.meta}
-                id_={mail.id}
+                uploadFileToDrive={() => uploadFileToDrive(attachment.id)}
+                setView={() => setViewComp(attachment.dataUrl)}
+                data={attachment.meta}
+                id_={attachment.id}
               />
 
               {/* <UploadProgressBar progress={stat?.progress ?? 0} status={stat?.status ?? "waiting"} uploadStart={() => {}} /> */}
