@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { NewAttachmentsData } from "../../attachments/_utils/getNewAttachmentsData";
-import { GenericModelData } from "@/app/_components/fregs/GenericModelWrapper";
 import { useAttachmentsAsyncStore } from "./useAttachmentsAsyncStore";
 import { putAttachment } from "../../_utils/saveAttachment";
+import { GenericModelData } from "@/_components/GenericModelContainer";
 
 type AttachmentsStoreProps = {
   ids: Set<string>;
