@@ -1,7 +1,7 @@
 import ThemeSelector from "@/_components/ThemeSelector";
 import { AuthButton } from "./SignInButton";
 
-async function SignIn({ route }: { route?: "traco" | "prodox" }) {
+async function SignIn() {
   // const session = await getServerSession(options);
   //
   return (
