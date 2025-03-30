@@ -1,5 +1,112 @@
 @import "tailwindcss";
 
+/* @media (hover:hover){
+  .hover\:underline:hover{
+    text-decoration: underline;
+  }
+} */
+/* @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *)); */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --transition-duration-2000: 2000ms;
+  --transition-duration-3000: 3000ms;
+  --transition-duration-4000: 4000ms;
+  --transition-duration-60000: 60000ms;
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  --grid-template-columns-13: repeat(13, minmax(0, 1fr));
+  --grid-template-columns-14: repeat(14, minmax(0, 1fr));
+  --grid-template-columns-15: repeat(15, minmax(0, 1fr));
+  --grid-template-columns-16: repeat(16, minmax(0, 1fr));
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 2rem;
+  @media (width >= --theme(--breakpoint-sm)) {
+    max-width: none;
+  }
+  @media (width >= 1400px) {
+    max-width: 1400px;
+  }
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+@utility scrollbar-hide {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+@media print {
+  @page {
+    /* size: A4 landscape; */
+    margin: 0;
+  }
+  body {
+    direction: rtl;
+    margin: 0;
+  }
+  #root {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* 
+@import "tailwindcss";
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -23,4 +130,4 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-}
+} */
