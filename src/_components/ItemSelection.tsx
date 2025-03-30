@@ -2,9 +2,9 @@ import { Check, ChevronsUpDown, Plus, X } from "lucide-react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { RefObject, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useClickOutSide } from "@/_hooks/useClickOutSide";
+// import { useClickOutSide } from "@/_hooks/useClickOutSide";
 
 // export type Opt = {
 //   value: string | number;
