@@ -1,6 +1,6 @@
 "use client";
 import { signOut } from "next-auth/react";
-import { MdOutlineOfflineBolt } from "react-icons/md";
+import { BotOff } from "lucide-react";
 function SignOutButton() {
   return (
     <button
@@ -9,7 +9,7 @@ function SignOutButton() {
         await signOut();
       }}
     >
-      <MdOutlineOfflineBolt className={`text-red-500 font-bold text-2xl`} />
+      <BotOff className={`text-red-500 font-bold text-2xl`} />
     </button>
   );
 }
