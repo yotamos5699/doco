@@ -99,7 +99,7 @@ export const FileFieldsString = `files(${FileFieldsList.join(",")})`;
 // id,description,permissionIds,name,properties,thumbnailLink,  webViewLink, webContentLink)
 
 export const getRelevantFileData = (data: drive_v3.Schema$File) => {
-  console.log({ data, filePermissions: data.permissions });
+  // console.log({ data, filePermissions: data.permissions });
   return {
     fileId: data.id,
     description: data.description,

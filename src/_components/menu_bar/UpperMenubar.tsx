@@ -1,22 +1,24 @@
 "use client";
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from "@/components/ui/menubar";
-import { LogOutButton } from "./_items/LogOutButton";
 import { UserImage } from "./_items/UserImage";
-import { Settings } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
 import ThemeSelector from "../ThemeSelector";
+import { signOut } from "next-auth/react";
 
 export function UpperMenubar() {
   return (
-    <Menubar className="flex">
+    <Menubar
+    // className="flex"
+    >
       <MenubarMenu>
         <MenubarTrigger>
           <UserImage />
         </MenubarTrigger>
         <MenubarContent>
-          <MenubarItem inset>
-            <LogOutButton />
+          <MenubarItem onPointerDown={() => signOut()}>
+            <LogOut />
           </MenubarItem>
-          <MenubarItem inset>
+          <MenubarItem>
             <ThemeSelector />
           </MenubarItem>
         </MenubarContent>

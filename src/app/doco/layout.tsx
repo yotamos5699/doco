@@ -1,4 +1,4 @@
-import "../globals.css";
+// import "../globals.css";
 import { SessionCache } from "./SessionCache";
 import { getCachedSession } from "./_google/clients";
 import { DocoModelsWrapper } from "./_models/DocoModelsWrapper";
@@ -9,21 +9,22 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import ThemeSelector from "@/_components/ThemeSelector";
 import { QueryClientProvider_ } from "@/_context/QueryClientProvider_";
 import { UpperNav } from "@/_components/UpperNav";
+import { getServerSession } from "next-auth";
+import { options } from "../api/auth/[...nextauth]/options";
 
 export default async function MainDocoLayout({ children }: { children: React.ReactNode }) {
-  const session = await getCachedSession();
-
+  const session = await getServerSession(options);
+  // const session = await getCachedSession();
+  // console.log({ layout_session: session });
   if (!session) return null;
   // return <ApiTests/>
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <QueryClientProvider_>
-        <SessionCache session={session} />
-        <DocoModelsWrapper />
-        <UpperNav />
-        {children}
-      </QueryClientProvider_>
-    </ThemeProvider>
+    <QueryClientProvider_>
+      <SessionCache session={session} />
+      <DocoModelsWrapper />
+      <UpperNav />
+      {children}
+    </QueryClientProvider_>
   );
 }
 

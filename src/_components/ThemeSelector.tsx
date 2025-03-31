@@ -26,7 +26,7 @@ function ThemeSelector() {
   if (resolvedTheme === "dark") {
     return (
       <button onClick={() => setTheme("light")}>
-        <Sun />;
+        <Sun />
       </button>
     );
   }

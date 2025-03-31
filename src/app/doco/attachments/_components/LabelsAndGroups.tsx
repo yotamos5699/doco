@@ -27,7 +27,7 @@ export default function LabelsAndGroups() {
   const currentLimit = useFoldersExplorerStore((state) => state.maxResults);
   console.log({ labels });
   return (
-    <div className={`flex flex-col gap-3 px-3 py-7`}>
+    <div className={`flex flex-col  gap-10 px-3 pt-7`}>
       {/* <div className={`flex`}>{labels.map((l) => l.name)}</div> */}
       <div className={`flex flex-col  gap-2`}>
         <h2 className={` top-0 right-0 border-b border-slate-400/60  text-xs`}>מקסימום מסמכים</h2>
@@ -59,9 +59,26 @@ export default function LabelsAndGroups() {
           ))}
         </div>
       </div>
+      <SearchesStats />
     </div>
   );
 }
+const SearchesStats = () => {
+  const d = useFoldersExplorerStore.getState().lastSynced;
+  return (
+    <div className={`flex w-full items-center  gap-6  pt-6`}>
+      <div className={`flex items-center gap-1`}>
+        <span className={`text-[10px] opacity-80`}>אחרון שנבדק</span>
+        <span className={`text-xs`}>{d?.range?.to} 24/2/2025</span>
+      </div>
+      <div className={`w-[2px] h-3 opacity-75  bg-slate-800 dark:bg-slate-200`} />
+      <div className={`flex items-center gap-1`}>
+        <span className={`text-[10px] opacity-80`}>בוצע ב</span>
+        <span className={`text-xs`}>{d?.action}24/2/2025</span>
+      </div>
+    </div>
+  );
+};
 const getLabelName = (id: string, name: string) => {
   const mapedValue = labelsMap.get(id);
   if (!mapedValue) return name;

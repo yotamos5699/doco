@@ -17,6 +17,7 @@ import { useDocumentsMapStore, useDocumentsStore } from "./_stores/_documents_st
 import { DateRange } from "react-day-picker";
 import { useShallow } from "zustand/react/shallow";
 import { useUpperNavData } from "./_hooks/useUpperNavData";
+import { useThumbsSync } from "./documents/_utils/linksProcessing";
 export const useDocoSessionStore = create<{ session: null | Session }>((set) => ({ session: null }));
 
 export const useSelectedFolderId = () => {
@@ -35,6 +36,7 @@ export type Date_Range = { from: number; to: number };
 type FoldersStoreProps = {
   currentFolderId: string;
   maxResults: number;
+  lastSynced: { range: Date_Range; action: number };
   updateDateRange: (value: DateRange | undefined) => void;
   dateRange: { from: number; to: number };
   setCurrentFolderId: (id: string) => void;
@@ -51,6 +53,7 @@ export const useFoldersExplorerStore = create<FoldersStoreProps>()(
       currentFolderId: "",
       maxResults: 10,
       dateRange: { from: 0, to: 0 },
+      lastSynced: { range: { from: 0, to: 0 }, action: 0 },
       updateDateRange: (dr) =>
         set(() => ({ dateRange: { from: dr?.from ? dr.from.getTime() / 1000 : 0, to: dr?.to ? dr.to.getTime() / 1000 : 0 } })),
       setCurrentFolderId: (currentFolderId) => set({ currentFolderId }),
@@ -80,6 +83,7 @@ export const SessionCache = ({ session }: { session: Session | null }) => {
   // const setDocuments = useDocumentsStore().setDocuments;
   useUpperNavData();
   usePermsSync();
+  useThumbsSync();
   useEffect(() => {
     if (session) {
       getCachedBaseFolderId().then((baseFolderId) => useFoldersExplorerStore.setState({ baseFolderId }));

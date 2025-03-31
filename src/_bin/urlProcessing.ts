@@ -1,114 +1,114 @@
-"use server";
+// "use server";
 
-import { cache } from "react";
-const octet_stream = `application/octet-stream`;
+// import { cache } from "react";
+// const octet_stream = `application/octet-stream`;
 
-interface FileTypeDetectionResult {
-  mimeType?: string;
-  confidence?: "high" | "low";
-}
+// interface FileTypeDetectionResult {
+//   mimeType?: string;
+//   confidence?: "high" | "low";
+// }
 
-type MagicNumber = Uint8Array;
-type ExtensionMap = Record<string, string>;
-type PatternList = MagicNumber[];
+// type MagicNumber = Uint8Array;
+// type ExtensionMap = Record<string, string>;
+// type PatternList = MagicNumber[];
 
-interface FileTypePatterns {
-  [key: string]: PatternList;
-}
+// interface FileTypePatterns {
+//   [key: string]: PatternList;
+// }
 
-const magicNumbers: FileTypePatterns = {
-  "application/pdf": [new Uint8Array([0x25, 0x50, 0x44, 0x46])],
-  "image/png": [new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])],
-  "image/jpeg": [new Uint8Array([0xff, 0xd8, 0xff]), new Uint8Array([0xff, 0xe0]), new Uint8Array([0xff, 0xe1])],
-  "image/gif": [new Uint8Array([0x47, 0x49, 0x46, 0x38])],
-};
+// const magicNumbers: FileTypePatterns = {
+//   "application/pdf": [new Uint8Array([0x25, 0x50, 0x44, 0x46])],
+//   "image/png": [new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])],
+//   "image/jpeg": [new Uint8Array([0xff, 0xd8, 0xff]), new Uint8Array([0xff, 0xe0]), new Uint8Array([0xff, 0xe1])],
+//   "image/gif": [new Uint8Array([0x47, 0x49, 0x46, 0x38])],
+// };
 
-const extensionMap: ExtensionMap = {
-  pdf: "application/pdf",
-  png: "image/png",
-  jpg: "image/jpeg",
-  jpeg: "image/jpeg",
-  gif: "image/gif",
-  txt: "text/plain",
-  html: "text/html",
-  css: "text/css",
-  js: "application/javascript",
-  json: "application/json",
-};
+// const extensionMap: ExtensionMap = {
+//   pdf: "application/pdf",
+//   png: "image/png",
+//   jpg: "image/jpeg",
+//   jpeg: "image/jpeg",
+//   gif: "image/gif",
+//   txt: "text/plain",
+//   html: "text/html",
+//   css: "text/css",
+//   js: "application/javascript",
+//   json: "application/json",
+// };
 
-export async function detectFileType(blob: Blob | ArrayBuffer | Uint8Array): Promise<FileTypeDetectionResult> {
-  const mimeType = await detectByMagicNumber(blob);
-  if (mimeType) {
-    return { mimeType, confidence: "high" };
-  }
+// export async function detectFileType(blob: Blob | ArrayBuffer | Uint8Array): Promise<FileTypeDetectionResult> {
+//   const mimeType = await detectByMagicNumber(blob);
+//   if (mimeType) {
+//     return { mimeType, confidence: "high" };
+//   }
 
-  const extensionType = detectByExtension(blob);
-  return extensionType ? { mimeType: extensionType, confidence: "low" } : {};
-}
+//   const extensionType = detectByExtension(blob);
+//   return extensionType ? { mimeType: extensionType, confidence: "low" } : {};
+// }
 
-function detectByExtension(blob: Blob | ArrayBuffer | Uint8Array): string | undefined {
-  const url = typeof blob === "object" && blob instanceof Blob ? URL.createObjectURL(blob) : blob.toString();
+// function detectByExtension(blob: Blob | ArrayBuffer | Uint8Array): string | undefined {
+//   const url = typeof blob === "object" && blob instanceof Blob ? URL.createObjectURL(blob) : blob.toString();
 
-  const parts = url.split(".");
-  const extension = parts.length > 1 ? parts.pop() : undefined;
-  return extension ? extensionMap[extension.toLowerCase()] : undefined;
-}
+//   const parts = url.split(".");
+//   const extension = parts.length > 1 ? parts.pop() : undefined;
+//   return extension ? extensionMap[extension.toLowerCase()] : undefined;
+// }
 
-async function detectByMagicNumber(blob: Blob | ArrayBuffer | Uint8Array): Promise<string | undefined> {
-  const arrayBuffer = await (typeof blob === "object" && blob instanceof Blob
-    ? blob.arrayBuffer()
-    : Array.isArray(blob)
-    ? Promise.resolve(new Uint8Array(blob).buffer)
-    : Promise.resolve(blob));
+// async function detectByMagicNumber(blob: Blob | ArrayBuffer | Uint8Array): Promise<string | undefined> {
+//   const arrayBuffer = await (typeof blob === "object" && blob instanceof Blob
+//     ? blob.arrayBuffer()
+//     : Array.isArray(blob)
+//     ? Promise.resolve(new Uint8Array(blob).buffer)
+//     : Promise.resolve(blob));
 
-  const uint8Array = new Uint8Array(arrayBuffer);
+//   const uint8Array = new Uint8Array(arrayBuffer);
 
-  for (const [mimeType, patterns] of Object.entries(magicNumbers)) {
-    for (const pattern of patterns) {
-      if (matchPattern(uint8Array, pattern)) {
-        return mimeType;
-      }
-    }
-  }
+//   for (const [mimeType, patterns] of Object.entries(magicNumbers)) {
+//     for (const pattern of patterns) {
+//       if (matchPattern(uint8Array, pattern)) {
+//         return mimeType;
+//       }
+//     }
+//   }
 
-  return undefined;
-}
+//   return undefined;
+// }
 
-function matchPattern(data: Uint8Array, pattern: Uint8Array): boolean {
-  if (data.length < pattern.length) return false;
-  for (let i = 0; i < pattern.length; i++) {
-    if (data[i] !== pattern[i]) return false;
-  }
-  return true;
-}
+// function matchPattern(data: Uint8Array, pattern: Uint8Array): boolean {
+//   if (data.length < pattern.length) return false;
+//   for (let i = 0; i < pattern.length; i++) {
+//     if (data[i] !== pattern[i]) return false;
+//   }
+//   return true;
+// }
 
-export const loadUrlToDataUrl = async (imageUrl: string) => {
-  // Check cache first
+// export const loadUrlToDataUrl = async (imageUrl: string) => {
+//   // Check cache first
 
-  try {
-    // Fetch image
-    const response = await fetch(imageUrl);
-    if (!response.ok) {
-      throw new Error("Failed to fetch image");
-    }
-    // response.headers.get("content-type")
-    // Convert to data URL
-    const blob = await response.blob();
-    const blobBuffer = await blob.arrayBuffer();
-    const base64 = Buffer.from(blobBuffer).toString("base64");
-    const mimeType = (await detectFileType(blob)).mimeType;
-    const pdfBlob = new File([blob], "sasd.pdf", { type: mimeType });
-    const objectUrl = URL.createObjectURL(pdfBlob);
-    // const dataUrl = `data:${blob.type === octet_stream ? "application/pdf" : blob.type || "image/jpeg"};base64,${base64}`;
+//   try {
+//     // Fetch image
+//     const response = await fetch(imageUrl);
+//     if (!response.ok) {
+//       throw new Error("Failed to fetch image");
+//     }
+//     // response.headers.get("content-type")
+//     // Convert to data URL
+//     const blob = await response.blob();
+//     const blobBuffer = await blob.arrayBuffer();
+//     const base64 = Buffer.from(blobBuffer).toString("base64");
+//     const mimeType = (await detectFileType(blob)).mimeType;
+//     const pdfBlob = new File([blob], "sasd.pdf", { type: mimeType });
+//     const objectUrl = URL.createObjectURL(pdfBlob);
+//     // const dataUrl = `data:${blob.type === octet_stream ? "application/pdf" : blob.type || "image/jpeg"};base64,${base64}`;
 
-    // Cache result
+//     // Cache result
 
-    console.log({ blob_type: blob.type, blobBuffer, size: blob.size, sliced: objectUrl, mimeType });
-    return [undefined, { dataUrl: objectUrl, base64, mimeType }] as const;
-  } catch (err) {
-    return [new Error(`Failed to load image: ${err instanceof Error ? err.message : "Unknown error"}`), undefined] as const;
-  }
-};
+//     console.log({ blob_type: blob.type, blobBuffer, size: blob.size, sliced: objectUrl, mimeType });
+//     return [undefined, { dataUrl: objectUrl, base64, mimeType }] as const;
+//   } catch (err) {
+//     return [new Error(`Failed to load image: ${err instanceof Error ? err.message : "Unknown error"}`), undefined] as const;
+//   }
+// };
 // async function getFileAsDataUrl(fileUrl: string) {
 //   try {
 //     const response = await fetch(fileUrl);

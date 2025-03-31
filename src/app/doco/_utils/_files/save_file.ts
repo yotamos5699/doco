@@ -8,7 +8,7 @@ import { getCachedBaseFolderId } from "../_folders/foldersUtils";
 import { drive_v3 } from "googleapis";
 import { getRelevantFileData } from "../factories";
 import { FileMetaData } from "../save_file_utils/types";
-import { decodeBase64 } from "../urlProcessing";
+import { decodeBase64 } from "../../../../_bin/urlProcessing";
 
 export type UploadResult = {
   fileId: string;

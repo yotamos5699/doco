@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { SingleFileData } from "../../_utils/save_file_utils/types";
-import { loadUrlToDataUrl } from "../../_utils/urlProcessing";
+// import { loadUrlToDataUrl } from "../../../../_bin/urlProcessing";
 import { getCachedThumbnail, setCachedThumbnail } from "../_utils/linksProcessing";
 import { useQuery } from "@tanstack/react-query";
 import { FileMetaData } from "./FileMetaData";
@@ -19,8 +19,11 @@ export const FileComponent = ({ file }: { file: SingleFileData }) => {
     queryFn: () => {
       if (!file.fileId || !file.thumbnailLink) return "";
       const ctn = getCachedThumbnail(file.fileId ?? "");
-      if (ctn) return ctn.data;
 
+      if (ctn) {
+        console.log("thumbnail cache hit:", { ctn });
+        return ctn.data;
+      }
       return getThumbNailDataUrl(processThumbnailUrl(file.thumbnailLink))
         .then(([error, data]) => {
           console.log({ thumbNail: { error, data } });

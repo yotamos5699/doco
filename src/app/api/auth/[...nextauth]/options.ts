@@ -2,6 +2,7 @@ import type { Account, NextAuthOptions, User } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { JWT } from "next-auth/jwt";
 import { updateCacheVersion } from "@/app/doco/_google/clients";
+import { setGoogleTokens } from "@/app/doco/_cookiesStore/googleCookies";
 // import { AdapterUser } from "next-auth/adapters";
 // import { updateCacheVersion } from "@/app/(doco)/doco/_google/clients";
 // https://gmail.googleapis.com/gmail/
@@ -17,21 +18,13 @@ const SCOPES = [
   "https://www.googleapis.com/auth/drive.photos.readonly",
 ];
 
-const printLog = false;
-export const getNewTokens = async (refresh_token: string) => {
-  return fetch("https://oauth2.googleapis.com/token", {
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      client_id: process.env.GOOGLE_CLIENT_ID!,
-      client_secret: process.env.GOOGLE_CLIENT_SECRET!,
+const printLog = true;
 
-      grant_type: "refresh_token",
-      refresh_token, // Type assertion
-    }),
-    method: "POST",
-  });
-};
+let exp_at_cache = 0;
 export const options: NextAuthOptions = {
+  // session: {
+  //   strategy: "jwt",
+  // },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -50,65 +43,99 @@ export const options: NextAuthOptions = {
 
   callbacks: {
     async jwt({ token, user, account }) {
-      const now = Date.now();
+      // console.log({ infunc_start: token, profile, session });
 
       // Handle initial login
       // issued_at: 1742203421589,
       // expires_at: null,
-      printLog && console.log({ token, issued_at: token.issued_at, expires_at: token.expires_at, user, account });
+      // printLog && console.log({ token, issued_at: token.issued_at, expires_at: token.expires_at, user, account });
       if (account && user) {
-        return {
-          ...token,
-          access_token: account.access_token,
-          issued_at: now,
-          expires_at: (account.expires_at! as number) * 1000,
-          refresh_token: account.refresh_token,
-          user_id: user.id,
-        };
+        setGoogleTokens({
+          props: {
+            access_token: account.access_token ?? "",
+            refresh_token: account.refresh_token ?? "",
+            tokens_expires_at: (account.expires_at! as number) * 1000,
+          },
+        });
+        // return {
+        //   ...token,
+        //   access_token: account.access_token,
+        //   // issued_at: now,
+        //   expires_at: (account.expires_at! as number) * 1000,
+        //   refresh_token: account.refresh_token,
+        //   user_id: user.id,
+        //   user,
+        // };
       }
 
-      // Handle token refresh
-      if (token.expires_at && (token?.expires_at as number) > now) {
-        printLog && console.log("steel fresh !!");
-        // console.log({ token });
-        return token;
-      }
+      // try {
 
-      // Handle expired token
-      try {
-        console.log("new token try");
-        const response = await getNewTokens(token.refresh_token as string);
-        const tokens = await response.json();
-        printLog && console.log("setting new tokens:");
-        if (!response.ok) throw tokens;
-        updateCacheVersion();
-        const expires_at = now + tokens.expires_in! * 1000;
-        const newToken = {
-          ...token,
-          access_token: tokens.access_token,
-          issued_at: now,
-          expires_at,
-          refresh_token: tokens.refresh_token ?? token.refresh_token,
-          user_id: token.user_id,
-        };
-        printLog && console.log({ newToken, expires_at });
-        return newToken;
-      } catch (error) {
-        return { ...token, error: "RefreshAccessTokenError" as const };
-      }
+      //   // printLog && console.log("setting new tokens:", { session, token });
+
+      //   exp_at_cache = newExpiresAt;
+      //   // const exp
+      //   console.log({
+      //     exp_at_cache,
+
+      //     old_expires_at: new Date(Number(token.expires_at)),
+      //     new_expires_at: new Date(newExpiresAt),
+      //     is_expired: Number(token.expires_at) < now,
+      //     token_age: (now - Number(token.issued_at)) / 1000 + " seconds",
+      //   });
+
+      //   if (!response.ok) throw tokens;
+      //   // exp_at = newExpiresAt;
+      //   if (token.expires_at) {
+      //     console.log({
+      //       exp_at_cache,
+
+      //       old_expires_at: new Date(Number(token.expires_at)),
+      //       new_expires_at: new Date(newExpiresAt),
+      //       is_expired: Number(token.expires_at) < now,
+      //       token_age: (now - Number(token.issued_at)) / 1000 + " seconds",
+      //     });
+      //   }
+      // updateCacheVersion();
+      // const old_time = Number(token?.expires_at);
+      // console.log("new token try", { token, now, new_time: expires_at, old_time, newLarger: expires_at > old_time! });
+      // const newToken = {
+      //   ...token,
+      //   access_token: tokens.access_token,
+      //   issued_at: now,
+      //   expires_at: newExpiresAt,
+      //   refresh_token: tokens.refresh_token ?? token.refresh_token,
+      //   user_id: token.user_id,
+      //   user: user ?? null,
+      // };
+      // console.log("token in jwt call:", { token, newToken });
+      // printLog && console.log({ newToken });
+
+      return token;
+      // return { ...token, ...newToken };
+      // return { ...newToken };
+      // } catch (error) {
+      //   return { ...token, error: "RefreshAccessTokenError" as const };
+      // }
     },
 
-    async session({ session, token }) {
-      printLog && console.log("token in session:", { token });
-      return {
-        ...session,
-        accessToken: String(token.access_token),
-        refreshToken: String(token.refresh_token),
-        accessTokenIssuedAt: Number(token.issued_at),
-        accessTokenExpiresAt: Number(token.expires_at),
-        user_id: token.user_id,
-      };
-    },
+    // session({ session, token, user }) {
+    //   // printLog && console.log("token in session:", { token, user, ttl: token.expires_at });
+    //   console.log({ token });
+    //   // token.expires_at = 99999;
+    //   const updatedSession = {
+    //     // ...token,
+    //     // token,
+    //     ...session,
+    //     accessToken: String(token.access_token),
+    //     refreshToken: String(token.refresh_token),
+    //     accessTokenIssuedAt: Number(token.issued_at),
+    //     accessTokenExpiresAt: exp_at_cache,
+    //     //  Number(token.expires_at),
+    //     user_id: token.user_id,
+    //   };
+    //   console.log({ updatedSession });
+    //   return updatedSession;
+    // },
   },
 };
 

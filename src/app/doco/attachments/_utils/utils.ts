@@ -8,6 +8,7 @@ export const getQueryString = () => {
   //   .filter((l) => l && !discludedLabels.includes(l));
 
   const dr = useFoldersExplorerStore.getState().dateRange;
+  useFoldersExplorerStore.setState({ lastSynced: { range: { from: dr.from, to: dr.to }, action: new Date().getTime() } });
   let query = "has:attachment";
 
   if (dr?.from) {
