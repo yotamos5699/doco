@@ -1,7 +1,7 @@
 import { useShallow } from "zustand/react/shallow";
 import Image from "next/image";
 import { User } from "lucide-react";
-import { useDocoSessionStore } from "@/app/doco/SessionCache";
+import { useDocoSessionStore } from "@/_doco/SessionCache";
 export const UserImage = () => {
   const session = useDocoSessionStore(useShallow((state) => state.session));
   const image_ = session?.user?.image;

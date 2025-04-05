@@ -1,35 +1,108 @@
 // import type { Metadata } from "next";
 
 import "./globals.css";
+import { UpperNav } from "@/_components/UpperNav";
+import { ThemeProvider } from "next-themes";
+import { SignInPage } from "./signIn/SignInPage";
+import { QueryClientProvider_ } from "@/_context/QueryClientProvider_";
+import { SessionCache } from "../_doco/SessionCache";
+import { DocoModelsWrapper } from "../_doco/_models/DocoModelsWrapper";
 import { getServerSession } from "next-auth";
 import { options } from "./api/auth/[...nextauth]/options";
-import SignIn from "./signIn/page";
-import { ThemeProvider } from "next-themes";
-
-// http://localhost:3000/doco?tab=documents
 
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession(options).then((d) => {
-    if (d) {
-      const { accessToken, refreshToken } = d;
-      return { accessToken, refreshToken };
-    }
-  });
+  // const [session, data] = await Promise.all([getServerSession(options), refreshCookies()]);
+  const session = await getServerSession(options);
+  console.log({ layout_session: session });
+  // const session = await getCachedSession();
+  // console.log({ layout_session: session });
 
   return (
     <html dir="rtl" lang="en" suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {session ? children : <SignIn />}
+          {!session ? (
+            <SignInPage />
+          ) : (
+            <QueryClientProvider_>
+              <UpperNav />
+              <SessionCache session={session} />
+              <DocoModelsWrapper />
+
+              {children}
+            </QueryClientProvider_>
+          )}
         </ThemeProvider>
       </body>
     </html>
   );
 }
+// const ApiTests = async () => {
+//   const folderId = await getCachedBaseFolderId();
+//   // const modifiedAt = await getFolderModified(folderId);
+//   const foldersRaw = await getFoldersList(folderId);
+//   const folders = new Map(foldersRaw);
+//   const folder_files = await listFilesInFolder(folderId);
+//   const file_id = folder_files[0].fileId;
+
+//   const updated_file = await updateFileProperties(file_id, { test: "test1", test2: "test2" });
+
+//   return (
+//     <>
+//       {JSON.stringify({ updated_file }, null, 2)}
+//       <div>
+//         {folder_files.map((f) => (
+//           <div>{JSON.stringify(f)}</div>
+//         ))}
+//       </div>
+//       <div className={`flex flex-col w-full h-full gap-2`}>
+//         <ThemeSelector />
+//         <Table>
+//           <TableHeader>
+//             <TableRow>
+//               <TableHead>שם</TableHead>
+//               <TableHead>תאריך</TableHead>
+//               <TableHead>נתיב</TableHead>
+//               <TableHead>אב</TableHead>
+//               <TableHead>בנים</TableHead>
+//             </TableRow>
+//           </TableHeader>
+//           <TableBody>
+//             {Array.from(folders).map(([id, f]) => {
+//               const { name, parentFolderId, path, subFolders, updatedAt } = f;
+//               console.log("in table:", { name });
+//               return (
+//                 <TableRow className={`border-2 h-full p-4 `} key={f.id}>
+//                   <TableCell>{name}</TableCell>
+//                   <TableCell>{updatedAt}</TableCell>
+//                   <TableCell>
+//                     {path.map((sf) => (
+//                       <div>
+//                         <span>{folders.get(sf)?.name}/</span>
+//                       </div>
+//                     ))}
+//                   </TableCell>
+//                   <TableCell>{folders.get(parentFolderId ?? "")?.name ?? ""}</TableCell>
+//                   <TableCell>
+//                     {subFolders.map((sf) => (
+//                       <div>
+//                         <span>{folders.get(sf)?.name}</span>
+//                       </div>
+//                     ))}
+//                   </TableCell>
+//                 </TableRow>
+//               );
+//             })}
+//           </TableBody>
+//         </Table>
+//       </div>
+//     </>
+//   );
+// };
 
 // import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google";

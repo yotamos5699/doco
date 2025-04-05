@@ -12,7 +12,7 @@ export const AuthButton: React.FC = () => {
         type="button"
         onClick={async () => {
           // setScreen("main");
-          await signIn("google");
+          await signIn();
           // router.push("/");
         }}
       >

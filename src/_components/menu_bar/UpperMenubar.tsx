@@ -12,12 +12,10 @@ export function UpperMenubar() {
     >
       <MenubarMenu>
         <MenubarTrigger>
-          <UserImage />
+          <Settings size={14} />
+          {/* <UserImage /> */}
         </MenubarTrigger>
         <MenubarContent>
-          <MenubarItem onPointerDown={() => signOut()}>
-            <LogOut />
-          </MenubarItem>
           <MenubarItem>
             <ThemeSelector />
           </MenubarItem>
@@ -25,10 +23,12 @@ export function UpperMenubar() {
       </MenubarMenu>
       <MenubarMenu>
         <MenubarTrigger>
-          <Settings size={14} />
-          {/* <UserImage /> */}
+          <UserImage />
         </MenubarTrigger>
         <MenubarContent>
+          <MenubarItem onPointerDown={() => signOut()}>
+            <LogOut />
+          </MenubarItem>
           <MenubarItem>
             <ThemeSelector />
           </MenubarItem>

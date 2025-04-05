@@ -3,6 +3,7 @@ import { options } from "../app/api/auth/[...nextauth]/options";
 
 async function UserData({ onlyImg }: { onlyImg?: boolean }) {
   const session = await getServerSession(options);
+  // console.log({ userDataSession: session });
   if (!session) return null;
   if (onlyImg) return <img className="rounded-full p-1" height={32} width={32} src={session.user?.image ?? ""} alt="" />;
   return (
